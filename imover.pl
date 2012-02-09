@@ -1,12 +1,8 @@
 #!/usr/bin/perl
 
-#
 # imover-0.1
-# Скрипт для сортировки и каталогизации фото и видеофайлов по дате съемки
-# Принимает список файлов на STDIN
-# Переименовывает и перемещает файлы по маске "МодельФотоаппарата ГГГГ/ГГГГ-ММ-ДД/ГГГГ-ММ-ДД_номер.расширение"
-# Автор - Михаил 'ivanych' Иванов (m.ivanych@gmail.com)
-#
+# Скрипт для переименования и сортировки фото и видеофайлов по дате съемки
+# Михаил <ivanych> Иванов (m.ivanych@gmail.com)
 
 use strict;
 use warnings;
@@ -16,13 +12,13 @@ use File::Copy;
 
 # Папки, в которые будут загружаться фото и видео файлы
 my %folder = (
-    'jpg' => '/Users/ivanych/Мои фотки',
-    'avi' => '/Users/ivanych/Мое видео',
-    '3gp' => '/Users/ivanych/Мое видео'
+'jpg' => '/Users/ivanych/Мои фотки',
+'avi' => '/Users/ivanych/Мое видео',
+'3gp' => '/Users/ivanych/Мое видео'
 );
 
 # Модели устройств
-my $model = 'iphone|s2|desire|a480';
+my $model = 'iphone|s2|s1|desire|a480';
 
 my $type = join '|', map {"($_)"} keys %folder;
 
@@ -35,9 +31,12 @@ while (<>) {
         if (-e $_) {
             # Получить данные файла
             my ($exp, $path, $file) = get($_);
-        
-            # Перенести файл
+            
+            # Переместить файл
             mov($_, $folder{$exp}, $path, $file);
+            
+            # Удалить оригинал
+            unlink($_) || die "Невозможно удалить файл $_: $!";
         }
         else {
             print "$_ -> не найден\n";
@@ -51,7 +50,7 @@ while (<>) {
 # Получить данные файла
 sub get {
     my ($orig) = @_;
-
+    
     my $info = ImageInfo($orig);
     
     # Устройство (из списка известных моделей)
@@ -85,19 +84,19 @@ sub get {
     return ($exp, $path, $file);
 };
 
-# Перенести файл
+# Переместить файл
 sub mov {
     my ($orig, $folder, $path, $file) = @_;
-
+    
     # Папка
     make_path("$folder/$path", {verbose => 1});
-  
+    
     #  Файл
     unless (-f "$folder/$path/$file") {
-        move("$orig", "$folder/$path/$file") || die "Невозможно перенести файл $orig: $!";
-        chmod(0400, "$folder/$path/$file") || die "Невозможно изменить права файла $orig: $!"
+        copy("$orig", "$folder/$path/$file") || die "Невозможно скопировать файл $orig: $!";
+        chmod(0400, "$folder/$path/$file") || die "Невозможно изменить права файла $orig: $!";
     };
-
+    
     # Сообщение
     print "$orig -> $folder/$path/$file\n";
 };
