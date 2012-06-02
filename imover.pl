@@ -10,6 +10,9 @@ use Image::ExifTool qw(:Public);
 use File::Path qw(make_path);
 use File::Copy;
 
+# Уведомление Growl
+my $growl = 1;
+
 # Папки, в которые будут загружаться фото и видео файлы
 my %folder = (
 'jpg' => '/Users/ivanych/Мои фотки',
@@ -30,10 +33,10 @@ while (<>) {
     if ($_ =~ /$type$/i) {
         if (-e $_) {
             # Получить данные файла
-            my ($exp, $path, $file) = get($_);
+            my ($exp, $dev, $path, $file) = get($_);
             
             # Переместить файл
-            mov($_, $folder{$exp}, $path, $file);
+            mov($_, $folder{$exp}, $dev, $path, $file);
             
             # Удалить оригинал
             unlink($_) || die "Невозможно удалить файл $_: $!";
@@ -74,29 +77,33 @@ sub get {
     
     # Путь
     my $path;
-    $path .= "$dev " if $dev;
     $path .= "$year/".join ('-', $year, $month, $day);
     
     # Файл
     my $file;
     $file .= join ('-', $year, $month, $day) . "_$num.$exp";
     
-    return ($exp, $path, $file);
+    return ($exp, $dev, $path, $file);
 };
 
 # Переместить файл
 sub mov {
-    my ($orig, $folder, $path, $file) = @_;
+    my ($orig, $folder, $dev, $path, $file) = @_;
     
     # Папка
-    make_path("$folder/$path", {verbose => 1});
+    make_path("$folder/$dev $path", {verbose => 1});
     
     #  Файл
-    unless (-f "$folder/$path/$file") {
-        copy("$orig", "$folder/$path/$file") || die "Невозможно скопировать файл $orig: $!";
-        chmod(0400, "$folder/$path/$file") || die "Невозможно изменить права файла $orig: $!";
+    unless (-f "$folder/$dev $path/$file") {
+        copy("$orig", "$folder/$dev $path/$file") || die "Невозможно скопировать файл $orig: $!";
+        chmod(0400, "$folder/$dev $path/$file") || die "Невозможно изменить права файла $orig: $!";
     };
     
-    # Сообщение
-    print "$orig -> $folder/$path/$file\n";
+    # Сообщение на консоль (полное)
+    print "$orig -> $folder/$dev $path/$file\n";
+    
+    # Уведомление Growl (краткое)
+    if ( (-f "/usr/local/bin/growlnotify") && ($growl) ) {
+        system ("growlnotify -a 'Image Capture' -t '$orig ($dev)' -m '$file'");
+    };
 };
