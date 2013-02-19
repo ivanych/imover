@@ -17,11 +17,12 @@ my $growl = 1;
 my %folder = (
 'jpg' => '/Users/ivanych/Мои фотки',
 'avi' => '/Users/ivanych/Мое видео',
-'3gp' => '/Users/ivanych/Мое видео'
+'3gp' => '/Users/ivanych/Мое видео',
+'mp4' => '/Users/ivanych/Мое видео'
 );
 
 # Модели устройств
-my $model = 'iphone|s2|s1|desire|a480';
+my $model = 'iphone|s2|s1|desire|a480|I9300';
 
 my $type = join '|', map {"($_)"} keys %folder;
 
