@@ -10,24 +10,38 @@ use Image::ExifTool qw(:Public);
 use File::Path qw(make_path);
 use File::Copy;
 
+# Флаги копирования и удаления
+my $copy = 1;
+my $delete = 1;
+
+if (@ARGV) {
+    if ($ARGV[0] eq '-nomov') {
+        $copy = 0;
+        $delete = 0;
+    }
+    elsif ($ARGV[0] eq '-nodel') {
+        $delete = 0;
+    };
+};
+
 # Уведомление Growl
 my $growl = 1;
 
 # Папки, в которые будут загружаться фото и видео файлы
 my %folder = (
-'jpg' => '/Users/ivanych/Мои фотки',
-'avi' => '/Users/ivanych/Мое видео',
-'3gp' => '/Users/ivanych/Мое видео',
-'mp4' => '/Users/ivanych/Мое видео'
+'jpg' => '/Volumes/Media/Мои фотки',
+'avi' => '/Volumes/Media/Мое видео',
+'3gp' => '/Volumes/Media/Мое видео',
+'mp4' => '/Volumes/Media/Мое видео'
 );
 
 # Модели устройств
-my $model = 'iphone|s2|s1|desire|a480|I9300';
+my $model = 'iphone|s2|s1|desire|a480|i9300|p690';
 
 my $type = join '|', map {"($_)"} keys %folder;
 
 # Читаем файлы
-while (<>) {
+while (<STDIN>) {
     chomp;
     
     # Обработка файла
@@ -40,14 +54,21 @@ while (<>) {
             mov($_, $folder{$exp}, $dev, $path, $file);
             
             # Удалить оригинал
-            unlink($_) || die "Невозможно удалить файл $_: $!";
+            if($copy) {
+                if ($delete) {
+                    unlink($_) || die "Невозможно удалить файл $_: $!";
+                }
+                else {
+                    print "не удален\n";
+                }
+            };
         }
         else {
-            print "$_ -> не найден\n";
+            print "$_ - не найден\n";
         };
     }
     else {
-        print "$_ -> игнор\n";
+        print "$_ - игнор\n";
     };
 };
 
@@ -60,6 +81,7 @@ sub get {
     # Устройство (из списка известных моделей)
     my $dev;
     ($dev) = $info->{'Model'} =~ /($model)/i if !$dev && $info->{'Model'};
+    ($dev) = $info->{'Model'} if !$dev;
     ($dev) = 'Unknown' if !$dev;
     
     # Дата
@@ -68,19 +90,19 @@ sub get {
     ($year, $month, $day) = $info->{'CreateDate'} =~ /^(\d{4}).(\d{2}).(\d{2})/ if !$year && $info->{'CreateDate'};
     ($year, $month, $day) = ('0000', '00', '00') if !$year;
     
-    # Номер файла (последние цифры перед расширением или последние 4 цифры размера файла)
+    # Номер файла (последние 3-4 цифры перед расширением, либо последние 1-4 цифры размера файла)
     my $num;
-    ($num) = $orig =~ /(\d+)\..+?$/;
+    ($num) = $orig =~ /(\d{3,4})\..+?$/;
     ($num) = (-s $orig) =~ /(\d{1,4}$)/ if !$num;
     
     # Расширение (нижний регистр)
     my ($exp) = map {lc} $orig =~ /\.(.+?)$/;
     
-    # Путь
+    # Путь (год/год-месяц-день)
     my $path;
     $path .= "$year/".join ('-', $year, $month, $day);
     
-    # Файл
+    # Файл (год-месяц-день_номер.расширение)
     my $file;
     $file .= join ('-', $year, $month, $day) . "_$num.$exp";
     
@@ -91,17 +113,22 @@ sub get {
 sub mov {
     my ($orig, $folder, $dev, $path, $file) = @_;
     
-    # Папка
-    make_path("$folder/$dev $path", {verbose => 1});
-    
-    #  Файл
-    unless (-f "$folder/$dev $path/$file") {
-        copy("$orig", "$folder/$dev $path/$file") || die "Невозможно скопировать файл $orig: $!";
-        chmod(0400, "$folder/$dev $path/$file") || die "Невозможно изменить права файла $orig: $!";
-    };
-    
     # Сообщение на консоль (полное)
     print "$orig -> $folder/$dev $path/$file\n";
+    
+    if ($copy) {
+        # Папка
+        make_path("$folder/$dev $path", {verbose => 1});
+    
+        #  Файл
+        unless (-f "$folder/$dev $path/$file") {
+            copy("$orig", "$folder/$dev $path/$file") || die "Невозможно скопировать файл $orig: $!";
+            chmod(0400, "$folder/$dev $path/$file") || die "Невозможно изменить права файла $orig: $!";
+        };
+    }
+    else {
+        print "не перемещен\n";
+    }
     
     # Уведомление Growl (краткое)
     if ( (-f "/usr/local/bin/growlnotify") && ($growl) ) {
