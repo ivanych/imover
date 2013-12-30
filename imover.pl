@@ -9,20 +9,7 @@ use warnings;
 use Image::ExifTool qw(:Public);
 use File::Path qw(make_path);
 use File::Copy;
-
-# Флаги копирования и удаления
-my $copy = 1;
-my $delete = 1;
-
-if (@ARGV) {
-    if ($ARGV[0] eq '-nomov') {
-        $copy = 0;
-        $delete = 0;
-    }
-    elsif ($ARGV[0] eq '-nodel') {
-        $delete = 0;
-    };
-};
+use Getopt::Std;
 
 # Папки, в которые будут загружаться фото и видео файлы
 my %folder = (
@@ -38,6 +25,10 @@ my $model = 'iphone|s2|s1|desire|a480|i9300|p690';
 # Типы файлов
 my $type = join '|', map {"($_)"} keys %folder;
 
+# Флаги копирования и удаления
+our ($opt_c, $opt_d);
+getopts('cd');
+
 # Читаем файлы
 while (<STDIN>) {
     chomp;
@@ -52,8 +43,8 @@ while (<STDIN>) {
             mov($_, $folder{$exp}, $dev, $path, $file);
 
             # Удалить оригинал
-            if($copy) {
-                if ($delete) {
+            if($opt_c) {
+                if ($opt_d) {
                     unlink($_) || die "Невозможно удалить файл $_: $!";
                 }
                 else {
@@ -114,7 +105,7 @@ sub mov {
     # Сообщение на консоль (полное)
     print "$orig -> $folder/$dev $path/$file\n";
 
-    if ($copy) {
+    if ($opt_c) {
         # Папка
         make_path("$folder/$dev $path", {verbose => 1});
 
