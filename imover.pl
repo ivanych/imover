@@ -26,8 +26,8 @@ my $model = 'iphone|s2|s1|desire|a480|i9300|p690';
 my $type = join '|', map {"($_)"} keys %folder;
 
 # Флаги копирования и удаления
-our ($opt_c, $opt_d);
-getopts('cd');
+our ($opt_c, $opt_d, $opt_a);
+getopts('cda');
 
 # Читаем файлы
 while (<STDIN>) {
@@ -35,29 +35,33 @@ while (<STDIN>) {
 
     # Обработка файла
     if ($_ =~ /$type$/i) {
+        print "$_ -> ";
+
         if (-e $_) {
             # Получить данные файла
             my ($exp, $dev, $path, $file) = get($_);
+            
+            print "$folder{$exp}/$dev $path/$file\n";
 
-            # Переместить файл
-            mov($_, $folder{$exp}, $dev, $path, $file);
-
-            # Удалить оригинал
+            # Скопировать файл
             if($opt_c) {
+                # Переместить файл
+                mov($_, $folder{$exp}, $dev, $path, $file);
+
+                # Удалить оригинал
                 if ($opt_d) {
                     unlink($_) || die "Невозможно удалить файл $_: $!";
-                }
-                else {
-                    print "не удален\n";
-                }
+                };
             };
         }
         else {
-            print "$_ - не найден\n";
+            print "Ошибка: файл не найден\n";
         };
     }
     else {
-        print "$_ - игнор\n";
+        if ($opt_a) {
+            print "$_ -> Неподдерживаемый тип файла\n";
+        };
     };
 };
 
@@ -102,20 +106,12 @@ sub get {
 sub mov {
     my ($orig, $folder, $dev, $path, $file) = @_;
 
-    # Сообщение на консоль (полное)
-    print "$orig -> $folder/$dev $path/$file\n";
+    # Папка
+    make_path("$folder/$dev $path", {verbose => 1});
 
-    if ($opt_c) {
-        # Папка
-        make_path("$folder/$dev $path", {verbose => 1});
-
-        #  Файл
-        unless (-f "$folder/$dev $path/$file") {
-            copy("$orig", "$folder/$dev $path/$file") || die "Невозможно скопировать файл $orig: $!";
-            chmod(0400, "$folder/$dev $path/$file") || die "Невозможно изменить права файла $orig: $!";
-        };
-    }
-    else {
-        print "не перемещен\n";
-    }
+    #  Файл
+    unless (-f "$folder/$dev $path/$file") {
+        copy("$orig", "$folder/$dev $path/$file") || die "Невозможно скопировать файл $orig: $!";
+        chmod(0400, "$folder/$dev $path/$file") || die "Невозможно изменить права файла $orig: $!";
+    };
 };
