@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# imover-0.2
+# imover-0.3
 # Скрипт для переименования и сортировки фото и видеофайлов по дате съемки
 # Михаил <ivanych> Иванов (m.ivanych@gmail.com)
 
@@ -23,9 +23,6 @@ if (@ARGV) {
         $delete = 0;
     };
 };
-
-# Уведомление Growl
-my $growl = 1;
 
 # Папки, в которые будут загружаться фото и видео файлы
 my %folder = (
@@ -129,9 +126,4 @@ sub mov {
     else {
         print "не перемещен\n";
     }
-    
-    # Уведомление Growl (краткое)
-    if ( (-f "/usr/local/bin/growlnotify") && ($growl) ) {
-        system ("growlnotify -a 'Image Capture' -t '$orig ($dev)' -m '$file'");
-    };
 };
