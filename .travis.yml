@@ -3,3 +3,6 @@ language: perl
 install:
     - "cpanm Image::ExifTool"
     - "cpanm -n --installdeps ."
+
+notifications:
+    email: false
