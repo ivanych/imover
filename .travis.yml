@@ -3,5 +3,5 @@ language: perl
 before_install:
     - cpanm Image::ExifTool
 
-install:
-    - cpanm --installdeps --notest --mirror http://cpan.mirrors.travis-ci.org .
+install: yes
+
