@@ -1,7 +1,5 @@
 language: perl
 
-before_install:
-    - cpanm Image::ExifTool
-
-install: yes
-
+install:
+    - "cpanm Image::ExifTool"
+    - "cpanm -n --installdeps ."
