@@ -1,4 +1,4 @@
-# imover
+# imover [![Build Status](https://travis-ci.org/ivanych/imover.png?branch=master)](https://travis-ci.org/ivanych/imover)
 
 Скрипт для переименования и сортировки фото и видеофайлов по дате съемки.
 
