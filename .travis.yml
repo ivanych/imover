@@ -4,4 +4,4 @@ before_install:
     - cpanm Image::ExifTool
 
 install:
-    - cpanm -v --installdeps --notest --mirror http://cpan.mirrors.travis-ci.org .
+    - cpanm --installdeps --notest --mirror http://cpan.mirrors.travis-ci.org .
