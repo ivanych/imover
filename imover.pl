@@ -11,12 +11,12 @@ use File::Path qw(make_path);
 use File::Copy;
 use Getopt::Std;
 
-# Папки, в которые будут загружаться фото и видео файлы
+# Каталоги, в которые будут загружаться фото и видео файлы
 my %folder = (
-'jpg' => '/Volumes/Media/Мои фотки',
-'avi' => '/Volumes/Media/Мое видео',
-'3gp' => '/Volumes/Media/Мое видео',
-'mp4' => '/Volumes/Media/Мое видео',
+'jpg' => $ENV{HOME}.'/imover/Мои фотки',
+'avi' => $ENV{HOME}.'/imover/Мое видео',
+'3gp' => $ENV{HOME}.'/imover/Мое видео',
+'mp4' => $ENV{HOME}.'/imover/Мое видео',
 );
 
 # Модели устройств
