@@ -1,7 +1,7 @@
 language: perl
 
-install:
-    - "cpanm Image::ExifTool"
+before_install:
+    - sudo apt-get install libimage-exiftool-perl
 
 notifications:
     email: false

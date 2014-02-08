@@ -1,0 +1,9 @@
+MANIFEST            This list of files
+Makefile.PL
+bin/imover
+LICENSE
+README.md
+t/01-exif.t
+t/images/exif-empty-empty.jpg
+t/images/exif-model-origdate.jpg
+t/images/exif-nomodel-createdate.jpg
