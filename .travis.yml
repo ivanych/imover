@@ -1,7 +1,4 @@
 language: perl
 
-before_install:
-    - cpanm --installdeps --notest .
-
 notifications:
     email: false
