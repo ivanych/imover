@@ -7,7 +7,7 @@ WriteMakefile(
     NAME      => 'imover',
     AUTHOR    => 'Mikhail Ivanov <m.ivanych@gmail.com>',
     ABSTRACT  => 'Script for renaming and sorting photos and videos',
-    VERSION   => '0.5',
+    VERSION   => '0.6',
     TEST_REQUIRES => {
         "Image::ExifTool" => "0",
     },
