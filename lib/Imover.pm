@@ -7,7 +7,7 @@ use Image::ExifTool qw(:Public);
 use File::Path qw(make_path);
 use File::Copy;
 
-our $VERSION = 0.6;
+our $VERSION = 0.7;
 
 # Получить данные файла
 sub get {
