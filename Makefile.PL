@@ -4,10 +4,10 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME      => 'imover',
+    NAME      => 'Imover',
     AUTHOR    => 'Mikhail Ivanov <m.ivanych@gmail.com>',
     ABSTRACT  => 'Script for renaming and sorting photos and videos',
-    VERSION   => '0.6',
+    VERSION_FROM => 'lib/Imover.pm',
     TEST_REQUIRES => {
         "Image::ExifTool" => "0",
     },

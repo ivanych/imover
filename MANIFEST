@@ -1,6 +1,7 @@
 MANIFEST            This list of files
 Makefile.PL
 bin/imover
+lib/Imover.pm
 LICENSE
 README.md
 t/01-exif.t
