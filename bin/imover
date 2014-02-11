@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use Getopt::Std;
+use Getopt::Long;
 
 use Imover;
 
@@ -26,9 +26,15 @@ my $model = 'iphone|s2|s1|desire|a480|i9300|p690';
 # Типы файлов
 my $type = join '|', map {"($_)"} keys %folder;
 
-# Флаги копирования и удаления
-our ($opt_c, $opt_d, $opt_a);
-getopts('cda');
+# Флаги копирования, удаления и вывода сообщений о неподдерживаемых типах
+my ($opt_c, $opt_d, $opt_a);
+
+# Читаем параметры
+Getopt::Long::Configure ("bundling");
+GetOptions ('c' => \$opt_c,
+            'd' => \$opt_d,
+            'a' => \$opt_a,
+           ) or exit;
 
 # Читаем файлы
 while (<STDIN>) {
