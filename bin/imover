@@ -12,29 +12,33 @@ use Getopt::Long;
 
 use Imover;
 
-# Каталоги, в которые будут загружаться фото и видео файлы
-my %folder = (
-'jpg' => $ENV{HOME}.'/imover/Мои фотки',
-'avi' => $ENV{HOME}.'/imover/Мое видео',
-'3gp' => $ENV{HOME}.'/imover/Мое видео',
-'mp4' => $ENV{HOME}.'/imover/Мое видео',
-);
-
 # Модели устройств
 my $model = 'iphone|s2|s1|desire|a480|i9300|p690';
-
-# Типы файлов
-my $type = join '|', map {"($_)"} keys %folder;
 
 # Флаги копирования, удаления и вывода сообщений о неподдерживаемых типах
 my ($opt_c, $opt_d, $opt_a);
 
+# Корневой каталог для загрузки файлов
+my $opt_root = $ENV{HOME} . '/imover';
+
 # Читаем параметры
 Getopt::Long::Configure ("bundling");
-GetOptions ('c' => \$opt_c,
-            'd' => \$opt_d,
-            'a' => \$opt_a,
+GetOptions ('c'      => \$opt_c,
+            'd'      => \$opt_d,
+            'a'      => \$opt_a,
+            'root=s' => sub{($opt_root = $_[1]) =~ s/\/+$//;},
            ) or exit;
+           
+# Каталоги, в которые будут загружаться фото и видео файлы
+my %folder = (
+'jpg' => $opt_root . '/Мои фотки',
+'avi' => $opt_root . '/Мое видео',
+'3gp' => $opt_root . '/Мое видео',
+'mp4' => $opt_root . '/Мое видео',
+);
+
+# Типы файлов
+my $type = join '|', map {"($_)"} keys %folder;
 
 # Читаем файлы
 while (<STDIN>) {
