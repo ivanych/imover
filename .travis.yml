@@ -1,7 +1,4 @@
 language: perl
 
-before_install:
-    - sudo apt-get install libimage-exiftool-perl
-
 notifications:
     email: false
