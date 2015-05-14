@@ -13,7 +13,7 @@ use Getopt::Long;
 use Imover;
 
 # Модели устройств
-my $model = 'iphone|s2|s1|desire|a480|i9300|p690';
+my $model = 'iphone|s2|s1|desire|a480|i9300|p690|gc200';
 
 # Флаги копирования, удаления и вывода сообщений о неподдерживаемых типах
 my ($opt_c, $opt_d, $opt_a);
